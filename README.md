@@ -2,4 +2,4 @@
 
 init empty directory
 
-hello 
+hello modified
