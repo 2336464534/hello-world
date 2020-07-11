@@ -2,6 +2,4 @@
 
 init empty directory
 
-
-
 hello 
