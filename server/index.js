@@ -2,7 +2,7 @@
 
 
 const http = require('http')
-// const hostname = '0.0.0.0';
+const hostname = '0.0.0.0';
 const port = 3000;
 const fs = require('fs')
 const {handleCrawer} = require('./module/Crawler')
@@ -32,4 +32,4 @@ const server = http.createServer((request, response) => {
   }
 
 })
-server.listen(port)
+server.listen(port, hostname)
