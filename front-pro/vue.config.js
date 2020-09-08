@@ -10,5 +10,5 @@ module.exports = {
       }
     }
   },
-  publicPath: '/ice/'
+  // publicPath: '/ice/'
 }
