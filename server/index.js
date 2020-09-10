@@ -9,7 +9,6 @@ const {handleCrawer} = require('./module/Crawler')
 
 const server = http.createServer((request, response) => {
   const { url, method, headers } = request
-  console.log(url)
   if (request.url === '/favicon.ico') { return } else if (url === '/' && method === 'GET') {
     // 静态页面服务
     fs.readFile('index.html', (err, data) => {
