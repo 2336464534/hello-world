@@ -7,7 +7,7 @@
   </div>
   <div>
     <h1 id="content">{{title}}</h1>
-    <div id="content">{{content}}</div>
+    <div id="contents" v-html="content"></div>
   </div>
 </div>
 </template>
@@ -23,7 +23,7 @@ export default {
     return {
       title: "",
       content: "",
-      index: 1,
+      index: Number(localStorage.getItem('aboutIndex')),
     };
   },
   methods: {
@@ -31,6 +31,7 @@ export default {
       ev && (this.index = Number(ev.target.value));
       !ev && (this.index += index);
       this.getContent(this.index);
+      localStorage.setItem("aboutIndex", this.index);
     },
     getContent(index) {
       axios
@@ -41,7 +42,7 @@ export default {
         .then((ret) => {
           console.log(ret);
           this.title = ret.data.title;
-          this.content = ret.data.content;
+          this.content = ret.data.content.replaceAll('。', '<br />');
         });
     },
   },
@@ -80,5 +81,10 @@ a {
   border-radius: 3px;
   margin: 0 20px;
   flex: 1
+}
+#contents{
+word-spacing: 5px;
+line-height: 35px;
+font-size: 16px;
 }
 </style>

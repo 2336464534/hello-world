@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login'
+import Config from '../views/config'
 
 Vue.use(VueRouter)
 
@@ -24,6 +25,11 @@ const routes = [
     name: 'Login',
     component: Login
   },
+  {
+    path: '/config',
+    name: 'Config',
+    component: Config
+  },
 ]
 
 const router = new VueRouter({
@@ -32,11 +38,11 @@ const router = new VueRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  console.log(to)
-  if (to.name !== 'Login' && !document.cookie) next({ name: 'Login' })
-  // 如果用户未能验证身份，则 `next` 会被调用两次
-  next()
-})
+// router.beforeEach((to, from, next) => {
+//   console.log(to)
+//   // if (to.name !== 'Login' && !document.cookie) next({ name: 'Login' })
+//   // 如果用户未能验证身份，则 `next` 会被调用两次
+//   next()
+// })
 
 export default router

@@ -12,7 +12,10 @@ function requestTxt(uri, callback) {
 
 function handleCrawer(request, response) {
   const { url, method, headers } = request
-  requestTxt(`https://www.81zw.com/book/47470/`, function (err, res, body) {
+  // 古武兵王
+  requestTxt(`https://www.81zw.com/book/31186/`, function (err, res, body) {
+
+  // requestTxt(`https://www.81zw.com/book/47470/`, function (err, res, body) {
     const $ = cherrio.load(body);
     const arrs = []
     const arr = $('#list dl').children('dd').find('a').map((i, v) => {
@@ -21,7 +24,7 @@ function handleCrawer(request, response) {
     const ids = arrs.map(v => v.split('/')[3].split('.')[0])
     const curr = url.split('=')[1]
 
-    const reqUrl = `https://www.81zw.com/book/47470/${ids[curr]}.html`;
+    const reqUrl = `https://www.81zw.com/book/31186/${ids[curr]}.html`;
     requestTxt(reqUrl, function (err, res, body) {
       const $ = cherrio.load(body);
       const title = $(".bookname h1").text()

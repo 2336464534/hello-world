@@ -1,49 +1,79 @@
 <template>
-<div id="app">
-  <el-container class="h100">
-    <el-aside class="h100" style="background-color:#545c64">
-      <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @select="handleSelect" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" unique-opened="true">
-        <el-submenu index="1">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>菜单</span>
-          </template>
-          <el-menu-item index="/">首页</el-menu-item>
-          <el-menu-item index="1-2">选项2</el-menu-item>
-          <el-menu-item-group title="其它">
-            <el-menu-item index="/about" path="/about">小说爬虫
-            </el-menu-item>
-          </el-menu-item-group>
-          <el-submenu index="1-4">
-            <template slot="title">个人中心</template>
-            <el-menu-item index="1-4-1">我的</el-menu-item>
-          </el-submenu>
-        </el-submenu>
-        <el-menu-item index="2">
-          <i class="el-icon-menu"></i>
-          <span slot="title">系统管理</span>
-        </el-menu-item>
-      </el-menu>
-    </el-aside>
+  <div id="app">
     <el-container class="h100">
-      <el-main>
-        <router-view />
-      </el-main>
+      <el-header style="padding: 0">
+        <el-menu
+          mode="horizontal"
+          :collapse="isCollapse"
+          @select="handleSelect"
+          :default-active="defaultActive"
+          background-color="#545c64"
+          text-color="#fff"
+          active-text-color="#ffd04b"
+        >
+          <el-submenu index="1">
+            <template slot="title">
+              <i class="el-icon-location"></i>
+              <span>菜单</span>
+            </template>
+            <el-menu-item index="/">首页</el-menu-item>
+            <el-menu-item index="1-2">选项2</el-menu-item>
+            <el-menu-item-group title="其它">
+              <el-menu-item index="/about" path="/about">小说爬虫 </el-menu-item>
+            </el-menu-item-group>
+            <el-submenu index="1-4">
+              <template slot="title">个人中心</template>
+              <el-menu-item index="1-4-1">我的</el-menu-item>
+            </el-submenu>
+          </el-submenu>
+          <el-menu-item index="/config">
+            <i class="el-icon-menu"></i>
+            <span slot="title">系统管理</span>
+          </el-menu-item>
+        </el-menu>
+        <el-dropdown @command="handleDropdown" style="position: absolute; right: 0; top: 18px;">
+          <span style="margin-right: 15px; color: #fff;font-size: 16px;">登陆用户</span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="info">个人信息</el-dropdown-item>
+            <el-dropdown-item command="loginout">退出</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-header>
+      <el-container class="h100">
+        <el-main>
+          <router-view />
+        </el-main>
+      </el-container>
     </el-container>
-  </el-container>
-  <router-view class="view three" name="login"></router-view>
-</div>
+    <router-view class="view three" name="login"></router-view>
+  </div>
 </template>
 
 <script>
 export default {
-  methods: {
-    handleSelect(index, path) {
-      console.log(index, path, this.$router.push(path))
-      this.$router.push(index)
-    }
+  data() {
+    return {
+      isCollapse: false,
+      defaultActive: location.pathname,
+      hasToken: localStorage.getItem('token')
+    };
   },
-}
+  methods: {
+    handleSelect(index) {
+      this.$router.push(index);
+    },
+    handleDropdown(command) {
+      switch (command) {
+        case "info":
+          break;
+        case "loginout":
+          localStorage.removeItem("token");
+          this.$router.push({ path: "/login" });
+          break;
+      }
+    },
+  },
+};
 </script>
 
 <style>
