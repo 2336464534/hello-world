@@ -13,7 +13,7 @@ const jwt = require('jsonwebtoken'); // token
 const jwtAuth = require('koa-jwt') // 验证token
 
 const redisClient = redis.createClient(6379, '121.4.246.84')
-// const redisClient = redis.createClient(6379, '47.102.143.107', { auth_pass: '123456' })
+// const redisClient = redis.createClient(6379, 'localhost')
 // const redisClient = redis.createClient('redis://47.102.143.107:6379', { auth_pass: '123456' })
 const wrapper = require('co-redis') // promise版
 const client = wrapper(redisClient)
@@ -41,7 +41,7 @@ app.use(session(SESS_CONFIG, app))
 app.use(async (ctx, next) => {
   const keys = await client.keys('*')
   keys.forEach(async key => {
-    console.log(await client.get(key), '------')
+    // console.log(await client.get(key), '------')
   });
   await next()
 })
