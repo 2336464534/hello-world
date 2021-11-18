@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset=utf-8>
+  <title>文件上传</title>
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <!-- import Vue before Element -->
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <!-- import JavaScript -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+
+<body>
+  <div>
+    <div id="app">
+      <el-upload class="upload-demo" drag :action="upload" multiple :on-success="handleUploadSuccess"
+        :show-file-list="false">
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+      </el-upload>
+      <h3>文件列表<small>下载</small></h3>
+      <template v-for="item in downList">
+        <el-link type="primary" :href="item" :download="item">{{item.replace('/upload/', '')}}</el-link>
+        <br />
+      </template>
+    </div>
+  </div>
+  <script type="text/javascript">
+    var api = 'http://121.4.246.84:9001';
+    const instance = axios.create({
+      withCredentials: true
+    });
+    new Vue({
+      el: '#app',
+      data: function () {
+        return { upload: api + '/upload', downList: [] }
+      },
+      created() {
+        this.getList()
+      },
+      methods: {
+        handleUploadSuccess(response) {
+          this.$message({
+            message: '上传成功!',
+            type: 'success'
+          });
+          this.getList()
+        },
+        getList() {
+          instance.get(api + '/getUploadList').then(res => {
+            if (res.data && res.data.length) {
+              this.downList = res.data || [];
+            }
+          })
+        }
+      },
+    })
+  </script>
+</body>
+
+</html>
