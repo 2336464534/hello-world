@@ -1,6 +1,7 @@
 const Koa = require('koa')
 const app = new Koa()
 const views = require('koa-views')
+const koaBody = require('koa-body');
 const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
@@ -12,15 +13,17 @@ const redis = require('redis')
 const jwt = require('jsonwebtoken'); // token
 const jwtAuth = require('koa-jwt') // 验证token
 
-const redisClient = redis.createClient(6379, '121.4.246.84')
+// const redisClient = redis.createClient(6379, '121.4.246.84')
 // const redisClient = redis.createClient(6379, 'localhost')
 // const redisClient = redis.createClient('redis://47.102.143.107:6379', { auth_pass: '123456' })
-const wrapper = require('co-redis') // promise版
-const client = wrapper(redisClient)
+// const wrapper = require('co-redis') // promise版
+// const client = wrapper(redisClient)
 
 const index = require('./routes/index')
+const base = require('./routes/base/index')
 const users = require('./routes/users')
 const oauth = require('./routes/oauth')
+const ftp = require('./routes/ftp')
 const statistics = require('./routes/statistics')
 
 // error handler
@@ -28,32 +31,32 @@ onerror(app)
 
 // session 加密
 app.keys = ['some secret']
-// 配置项
-const SESS_CONFIG = {
-  key: 'ice:sess',
-  maxAge: 86400000,
-  httpOnly: true, // 仅服务器可以修改
-  signed: true, // 签名
-  store: redisStore({ redisClient }), // 存储方式
-}
-app.use(session(SESS_CONFIG, app))
-// redis 客户端 
-app.use(async (ctx, next) => {
-  const keys = await client.keys('*')
-  keys.forEach(async key => {
-    // console.log(await client.get(key), '------')
-  });
-  await next()
-})
+// // 配置项
+// const SESS_CONFIG = {
+//   key: 'ice:sess',
+//   maxAge: 86400000,
+//   httpOnly: true, // 仅服务器可以修改
+//   signed: true, // 签名
+//   store: redisStore({ redisClient }), // 存储方式
+// }
+// app.use(session(SESS_CONFIG, app))
+// // redis 客户端 
+// app.use(async (ctx, next) => {
+//   const keys = await client.keys('*')
+//   keys.forEach(async key => {
+//     // console.log(await client.get(key), '------')
+//   });
+//   await next()
+// })
 
-app.use(async (ctx, next) => {
-  if (ctx.path === '/favicon.ico') return
-  let n = ctx.session.count || 0
-  ctx.session.count = ++n
-  // ctx.body = `第${n}次访问`
-  await next()
-  console.log(ctx.session)
-})
+// app.use(async (ctx, next) => {
+//   if (ctx.path === '/favicon.ico') return
+//   let n = ctx.session.count || 0
+//   ctx.session.count = ++n
+//   // ctx.body = `第${n}次访问`
+//   await next()
+//   console.log(ctx.session)
+// })
 
 // session鉴权
 // app.use(async (ctx, next) => {
@@ -69,6 +72,13 @@ app.use(async (ctx, next) => {
 //     }
 //   }
 // })
+
+app.use(async (ctx, next) => {
+  ctx.set('Access-Control-Allow-Origin', ctx.headers.origin); // 很奇怪的是，使用 * 会出现一些其他问题
+  ctx.set('Access-Control-Allow-Headers', 'content-type');
+  ctx.set('Access-Control-Allow-Methods', 'OPTIONS,GET,HEAD,PUT,POST,DELETE,PATCH')
+  await next();
+});
 
 // middlewares
 app.use(bodyparser({
@@ -92,6 +102,15 @@ app.use(async (ctx, next) => {
 
 // routes
 app.use(index.routes(), index.allowedMethods())
+app.use(koaBody({
+  multipart: true, // 支持文件上传
+  formidable: {
+    maxFieldsSize: 220 * 1024 * 1024, // 最大文件为2兆
+    multipart: true // 是否支持 multipart-formdate 的表单
+  }
+}));
+app.use(ftp.routes(), ftp.allowedMethods())
+app.use(base.routes(), base.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
 app.use(oauth.routes(), oauth.allowedMethods())
 app.use(statistics.routes(), statistics.allowedMethods())

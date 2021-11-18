@@ -1,18 +1,25 @@
 {
   "name": "koa2-pro",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
+  "register": "121.4.246.84:5000",
   "scripts": {
     "start": "node bin/www",
     "dev": "./node_modules/.bin/nodemon bin/www",
     "prd": "pm2 start bin/www",
+    "docker:build": "docker build -f Dockerfile -t $npm_package_register/$npm_package_name/prod:$npm_package_version .",
+    "docker:push": "docker push $npm_package_register/$npm_package_name/prod:$npm_package_version",
+    "docker:prod": "npm run docker:build && npm run docker:push",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "co-redis": "^2.1.1",
     "debug": "^4.1.1",
+    "got": "^11.8.2",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.7.0",
+    "koa-body": "^4.2.0",
     "koa-bodyparser": "^4.2.1",
     "koa-convert": "^1.2.0",
     "koa-json": "^2.0.2",
@@ -27,6 +34,7 @@
     "mysql": "^2.18.1",
     "pug": "^2.0.3",
     "redis": "^3.0.2",
+    "sha1": "^1.1.1",
     "svg-captcha": "^1.4.0",
     "uuidjs": "^4.2.6"
   },
